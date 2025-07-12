@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>揣厝 TshuéTshù</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="disclaimer-popup" class="popup">
+    <div class="popup-content">
+      <h2>使用者免責聲明</h2>
+      <p>本平台僅為租屋資訊整合與篩選工具，資料來源來自公開社群平台。所有資訊皆保留原文與來源，請自行聯絡發布者確認資訊正確性。點擊「我同意」即代表您同意本條款。</p>
+      <button id="agree-btn">我同意</button>
+    </div>
+  </div>
+
+  <div class="main-interface hidden">
+    <header>
+      <h1>揣厝 TshuéTshù</h1>
+      <p>精粹生活，從一間好厝開始</p>
+    </header>
+    <main>
+      <input type="text" id="search" placeholder="輸入地點、關鍵字..." />
+      <div id="listings"></div>
+    </main>
+    <footer class="glass-footer">
+      <p>資料來自 Facebook 社群 | © 2025 TshuéTshù</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('agree-btn').addEventListener('click', () => {
+      document.getElementById('disclaimer-popup').style.display = 'none';
+      document.querySelector('.main-interface').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>

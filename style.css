@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f4f4;
+}
+
+.popup {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  width: 80%;
+  max-width: 400px;
+}
+
+.hidden { display: none; }
+
+header {
+  padding: 20px;
+  text-align: center;
+  background: #5e17eb;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+input[type="text"] {
+  width: 80%;
+  padding: 12px;
+  margin: 20px auto;
+  display: block;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#listings {
+  padding: 0 20px;
+}
+
+.glass-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.4);
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  box-shadow: 0 -1px 6px rgba(0,0,0,0.1);
+}
