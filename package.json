@@ -1,0 +1,18 @@
+{
+  "name": "tshue-tshu-backend",
+  "version": "1.0.0",
+  "description": "揣厝後端系統 - REST API for rental search & user login service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["express", "mongodb", "mongoose", "api", "rental", "揣厝", "TshuéTshù"],
+  "author": "人類",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.4"
+  }
+}
