@@ -1,0 +1,14 @@
+{
+  "name": "tshue-tshu-crawler",
+  "version": "1.0.0",
+  "description": "Facebook 公開社團爬蟲，每日排程更新至 MongoDB",
+  "main": "publicCrawl.js",
+  "scripts": {
+    "start": "node publicCrawl.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.3.8",
+    "mongodb": "^6.5.0",
+    "dotenv": "^16.4.5"
+  }
+}
