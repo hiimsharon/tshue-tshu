@@ -1,6 +1,7 @@
 {
   "name": "tshue-tshu-crawler",
   "version": "1.0.0",
+  "type": "module",
   "description": "Facebook 公開社團爬蟲，每日排程更新至 MongoDB",
   "main": "publicCrawl.js",
   "scripts": {
