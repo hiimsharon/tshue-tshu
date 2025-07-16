@@ -1,6 +1,7 @@
 {
   "name": "tshue-tshu-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "揣厝後端系統 - REST API for rental search & user login service",
   "main": "server.js",
   "scripts": {
