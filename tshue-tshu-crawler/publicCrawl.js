@@ -1,30 +1,51 @@
-require("dotenv").config();
-const puppeteer = require("puppeteer");
-const { MongoClient } = require("mongodb");
+import puppeteer from 'puppeteer'
+import { MongoClient } from 'mongodb'
+import dotenv from 'dotenv'
+dotenv.config()
 
-(async () => {
-  const browser = await puppeteer.launch({ headless: "new" });
-  const page = await browser.newPage();
-  await page.goto("https://www.facebook.com/groups/2391145197642950", { waitUntil: "networkidle2" });
+const uri = process.env.MONGODB_URI
+const client = new MongoClient(uri)
+const dbName = 'tshue_tshu'
+const collectionName = 'posts'
 
-  const content = await page.evaluate(() => {
-    const posts = [];
-    document.querySelectorAll("div[role=article]").forEach(el => {
-      posts.push(el.innerText);
-    });
-    return posts;
-  });
+export async function crawlPublicPosts() {
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  })
+  const page = await browser.newPage()
 
-  await browser.close();
+  // 👉 目標網址
+  const url = process.env.CRAWL_URL || 'https://www.facebook.com/groups/2391145197642950/'
+  await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 })
 
-  const uri = process.env.MONGODB_URI;
-  const client = new MongoClient(uri);
-  await client.connect();
-  const db = client.db("tshue_tshu");
-  const collection = db.collection("posts");
+  // 👉 擷取貼文資料（可自訂邏輯）
+  const posts = await page.evaluate(() => {
+    const data = []
+    document.querySelectorAll('div[data-ad-preview="message"]').forEach(post => {
+      const text = post.innerText.trim()
+      if (text) data.push({ text, createdAt: new Date().toISOString() })
+    })
+    return data
+  })
 
-  const insertResult = await collection.insertMany(content.map(text => ({ text, createdAt: new Date() })));
-  console.log("Inserted documents:", insertResult.insertedCount);
+  console.log('✅ 抓到貼文數量:', posts.length)
 
-  await client.close();
-})();
+  try {
+    await client.connect()
+    const db = client.db(dbName)
+    const collection = db.collection(collectionName)
+
+    if (posts.length > 0) {
+      await collection.insertMany(posts)
+      console.log('📥 成功寫入 MongoDB')
+    } else {
+      console.log('⚠️ 沒有找到貼文，略過寫入')
+    }
+  } catch (err) {
+    console.error('❌ MongoDB 寫入失敗：', err)
+  } finally {
+    await client.close()
+    await browser.close()
+  }
+}
