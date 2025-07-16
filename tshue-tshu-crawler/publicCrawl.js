@@ -1,3 +1,5 @@
+// publicCrawl.js
+
 import puppeteer from 'puppeteer'
 import { MongoClient } from 'mongodb'
 import dotenv from 'dotenv'
@@ -11,9 +13,15 @@ const collectionName = 'posts'
 export async function crawlPublicPosts() {
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
+
   const page = await browser.newPage()
+
+  // ✅ 加入 User-Agent（提升穩定性）
+  await page.setUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0'
+  )
 
   // 👉 目標網址
   const url = process.env.CRAWL_URL || 'https://www.facebook.com/groups/2391145197642950/'
@@ -29,21 +37,27 @@ export async function crawlPublicPosts() {
     return data
   })
 
-  console.log('✅ 抓到貼文數量:', posts.length)
+  const now = new Date().toLocaleString()
+  console.log(`[${now}] ✅ 擷取到 ${posts.length} 筆貼文`)
 
   try {
     await client.connect()
     const db = client.db(dbName)
     const collection = db.collection(collectionName)
 
-    if (posts.length > 0) {
-      await collection.insertMany(posts)
-      console.log('📥 成功寫入 MongoDB')
-    } else {
-      console.log('⚠️ 沒有找到貼文，略過寫入')
+    let insertedCount = 0
+
+    for (const post of posts) {
+      const exists = await collection.findOne({ text: post.text })
+      if (!exists) {
+        await collection.insertOne(post)
+        insertedCount++
+      }
     }
+
+    console.log(`[${now}] 📥 成功寫入 ${insertedCount} 筆新貼文，略過 ${posts.length - insertedCount} 筆重複貼文`)
   } catch (err) {
-    console.error('❌ MongoDB 寫入失敗：', err)
+    console.error(`[${now}] ❌ MongoDB 寫入失敗：`, err)
   } finally {
     await client.close()
     await browser.close()
